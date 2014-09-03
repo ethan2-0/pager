@@ -26,10 +26,6 @@ if(!$) {
     alert("Requires JQuery.");
     throw "Requires JQuery. Cannot run.";
 }
-if(!$.fadeIn) {
-    alert("Your JQuery implementation doesn't support fadeIn/fadeOut.");
-    throw "Requires up-to-date JQuery. Cannot run.";
-}
 //Util function
 function EbyId(id) {
     return document.getElementById(id);
@@ -70,7 +66,6 @@ var Pager = {
             };
         }
         realCallback = function() {
-            Pager.currentPage = page;
             callback();
         }
         if(Pager.shouldTransition) {
@@ -103,14 +98,16 @@ var Pager = {
     },
     //goingBack is only for internal use. You don't need to provice it.
     loadPage: function(name, goingBack) {
+        var oldPage = this.currentPage;
+        Pager.currentPage = Pager.getPage(name);
         if(goingBack != true) {
-            this.backStack.push(this.currentPage);
+            this.backStack.push(this.oldPage);
         }
         var stepTwo = function() {
             Pager.showPage(name.real != null ? name : Pager.getPage(name));
         }
-        if(this.currentPage.real) {
-            this.hidePage(this.currentPage, stepTwo);
+        if(oldPage.real) {
+            this.hidePage(oldPage, stepTwo);
         } else {
             stepTwo();
         }
